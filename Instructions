@@ -1,0 +1,71 @@
+Instructions for opsSchool final project - 2018
+
+General:
+
+You will install a highly available spree application, publicly accessed (open to the internet), on AWS. you will need to take into consideration all the subjects learned during the training while “productizing” the site.
+
+
+Part - 1. - design
+
+You will need to provide a document that describes the system as a whole by detailing the following aspects:
+
+Define an SLA (Service-level Agreement) for performance and availability of the site
+
+What is the infrastructure you have chosen to implement your architecture
+
+Add a building block schema, as well as a data flow diagram.
+
+
+Part - 2 - build
+
+Provision, deploy & monitor the site and productize it on AWS.
+
+You will need to use the different technologies you’ve learned during the training.
+
+You may choose to switch between different tools that serve the same purpose (for example cloudformation/terraform) as long as you implement the methodologies learned (databases, service discovery, load balancers, containers/monitoring…..))
+
+
+
+All configuration of your project should be automated and deploied using code and configuration tools such as teraform/ansible.
+
+best if you can completely delete your environment and build it by running your code.
+
+
+
+Part - 3 - test
+
+Run functional tests, stress tests and load tests.
+
+Add a report that covers the results of your tests.
+
+How does your system behave under load?
+
+Explain where are the bottlenecks/weak spots in your application and how you can solve them.
+
+In your testing, address different resources (Memory/CPU/Network/Disk IO) as well as Latency and throughput.
+
+
+Part - 4 presentation
+
+Update your document with the final design
+
+
+Timeline:
+
+
+
+12-Jun-2019 - Students to send “technical” document to instructors
+
+18-Jun-2019 - Instructors send comments on technical document
+
+25-Jun-2019 -  Hands on day @outbrain backed by instructors
+
+We expect all students to come to this session after building the site with all its components
+
+During the hands on session we will work with the students where they “got stuck” or where they need some guidance on best practices.
+
+2-Jul-2019 - Students to present the Projects to the instructors.
+
+
+
+
