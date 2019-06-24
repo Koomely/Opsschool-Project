@@ -49,7 +49,9 @@ user_data = "${file("instances/ha-proxy/bootstrap.sh")}"
 
 
 
-
+#############################
+# Outputs
+#############################
 
 output "HA-Proxy" {
   value = "${aws_instance.ha-proxy.*.public_ip}"
