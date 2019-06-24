@@ -16,7 +16,7 @@
      become_method: sudo
 
    - name: Consul | HAProxy |  Shell command run-consul
-     shell: "/opt/consul/bin/run-consul --client --cluster-tag-key consul-cluster --cluster-tag-value consul-group --datacenter $(cat /home/ubuntu/datacenter)"
+     shell: "/opt/consul/bin/run-consul --client --cluster-tag-key consul-cluster --cluster-tag-value consul-group --datacenter $(cat /home/ubuntu/az)"
      become: yes
      become_method: sudo
 
