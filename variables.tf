@@ -21,6 +21,6 @@ variable "cidr" {
 }
 
 variable "count" {
-    default = 1
+    default = 2
 }
 

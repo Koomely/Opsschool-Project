@@ -76,3 +76,31 @@ resource "aws_s3_bucket_object" "haproxy_cfg" {
   source = "instances/ha-proxy/haproxy.cfg"
 }
 
+
+
+# Copying files required for HA-Proxy
+
+resource "aws_s3_bucket_object" "consul_folder" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul/"
+  source = "/dev/null"
+}
+
+resource "aws_s3_bucket_object" "consul_provision" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul/provision.yaml"
+  source = "instances/consul/provision.yaml"
+}
+
+resource "aws_s3_bucket_object" "consul_json" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul/consul.server.json"
+  source = "instances/consul/consul.server.json"
+}
+

@@ -1,4 +1,4 @@
-/*
+
 
 # Create an IAM role for the auto-join
 resource "aws_iam_role" "consul-join" {
@@ -26,4 +26,3 @@ resource "aws_iam_instance_profile" "consul-join" {
   role = "${aws_iam_role.consul-join.name}"
 }
 
-*/
