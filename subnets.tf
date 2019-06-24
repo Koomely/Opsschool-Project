@@ -20,6 +20,7 @@ resource "aws_subnet" "public" {
     availability_zone = "${element(data.aws_availability_zones.az.names, count.index)}"
     cidr_block = "${cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index+"${var.count}")}"
     vpc_id = "${aws_vpc.vpc.id}"
+    map_public_ip_on_launch = true
 
   tags = {
     Name = "Final-Project-public-${element(data.aws_availability_zones.az.names, count.index)}"
@@ -57,8 +58,6 @@ resource "aws_route_table" "public" {
 }
 
 # Associating Routing tables with Subnets
-
-# ROUTE TABLE ASSOCIATION
 
 resource "aws_route_table_association" "public" {
   count          = "${var.count}"
