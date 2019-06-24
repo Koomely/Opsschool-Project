@@ -11,7 +11,7 @@
        dest: /home/ubuntu/terraform-aws-consul
 
    - name: Consul | HAProxy |  Shell command Installing Consul
-     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 0.9.1"
+     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 1.5.1"
      become: yes
      become_method: sudo
 

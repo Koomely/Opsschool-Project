@@ -57,7 +57,7 @@ user_data = "${file("instances/ha-proxy/bootstrap.sh")}"
 resource "aws_instance" "consul-server" {
     count = "${var.count * 3}"
     ami = "${var.ami}"
-    subnet_id = "${element(aws_subnet.public.*.id, (count.index + 1) / 3)}"
+    subnet_id = "${element(aws_subnet.public.*.id, count.index  / 3)}"
     instance_type = "t2.micro"
     vpc_security_group_ids = ["${aws_security_group.any.id}"]
     key_name = "${aws_key_pair.generated_key.key_name}"
@@ -67,7 +67,7 @@ resource "aws_instance" "consul-server" {
  
   
   tags = {
-    Name = "Final-Project-consul-server-${element(data.aws_availability_zones.az.names, count.index)}"
+    Name = "Final-Project-consul-server-${element(data.aws_availability_zones.az.names, count.index  / 3)}"
     consul-cluster = "consul-group"
   }
 user_data = "${file("instances/consul/bootstrap.sh")}"
