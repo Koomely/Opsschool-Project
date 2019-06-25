@@ -1,0 +1,53 @@
+---
+- name: Consul-Template | HAProxy Server provisioning
+  hosts: localhost
+  become: true
+
+  tasks:
+
+   - name: Consul-Template | HAProxy | Download consul-template
+     get_url:
+       url: 'https://releases.hashicorp.com/consul-template/0.15.0/consul-template_0.15.0_linux_amd64.zip'
+       dest: /home/ubuntu/consul-template/consul-template.zip
+
+   - name: Consul-Template | HAProxy |  Unzip consul-template
+     shell: "unzip consul-template.zip"
+
+   - name: Consul-Template | HAProxy | Copy consul-template binary
+     copy:
+       src: /home/ubuntu/consul-template/consul-template
+       dest: /usr/bin/consul-template
+
+   - name: Consul-Template | HAProxy |  chmod consul-template binary
+     file:
+       path: /usr/bin/consul-template
+       mode: "+x"
+
+   - name: Consul-Template | HAProxy |  Create config directory
+     file:
+       path: /etc/consul-template.d
+       state: directory
+       mode: "a+w"
+
+   - name: Consul-Template | HAProxy | Copy consul-template service
+     copy:
+       src: /home/ubuntu/consul-template/consul-template.service
+       dest: /etc/systemd/system/consul-template.service
+
+   - name: Consul-Template | HAProxy | Copy consul-template upstart conf
+     copy:
+       src: /home/ubuntu/consul-template/consul-template.conf
+       dest: /etc/init/
+
+   - name: Consul-Template | HAProxy | Copy haproxy template
+     copy:
+       src: /home/ubuntu/consul-template/haproxy.hcl
+       dest: /etc/consul-template.d/
+
+   - name: Consul | HAProxy | Restart consul
+     systemd:
+       name: consul-template
+       enabled: yes
+       state: restarted
+     become: true
+     become_method: sudo

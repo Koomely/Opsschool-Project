@@ -76,3 +76,72 @@ resource "aws_s3_bucket_object" "haproxy_cfg" {
   source = "instances/ha-proxy/haproxy.cfg"
 }
 
+# Copying files for Consul-Template
+
+resource "aws_s3_bucket_object" "consul_template_folder" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/"
+  source = "/dev/null"
+}
+
+resource "aws_s3_bucket_object" "consul_template_service" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/consul-template.service"
+  source = "instances/consul-template/consul-template.service"
+}
+
+resource "aws_s3_bucket_object" "consul_template_conf" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/consul-template.conf"
+  source = "instances/consul-template/consul-template.conf"
+}
+
+resource "aws_s3_bucket_object" "consul_template_yaml" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/consul-template.yaml"
+  source = "instances/consul-template/consul-template.yaml"
+}
+
+resource "aws_s3_bucket_object" "consul_template_ctmpl" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/haproxy.ctmpl"
+  source = "instances/consul-template/haproxy.ctmpl"
+}
+
+resource "aws_s3_bucket_object" "consul_template_hcl" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul-template/haproxy.hcl"
+  source = "instances/consul-template/haproxy.hcl"
+}
+
+# Copying files required for Consul-Server
+
+resource "aws_s3_bucket_object" "consul_folder" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul/"
+  source = "/dev/null"
+}
+
+resource "aws_s3_bucket_object" "consul_provision" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "consul/provision.yaml"
+  source = "instances/consul/provision.yaml"
+}
+
+

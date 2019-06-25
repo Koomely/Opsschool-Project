@@ -1,0 +1,48 @@
+---
+- name: Consul | Server provisioning
+  hosts: localhost
+  become: true
+
+  tasks:
+
+   - name: Consul | Server | Git Clone
+     git:
+       repo: 'https://github.com/hashicorp/terraform-aws-consul.git'
+       dest: /home/ubuntu/terraform-aws-consul
+
+   - name: Consul | Server |  Shell command Installing Consul
+     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 1.5.1"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | Server |  Shell command run-consul
+     shell: "/opt/consul/bin/run-consul --server --skip-consul-config"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | Server | Wait until the file consul.server.json is present before continuing
+     wait_for:
+       path: /home/ubuntu/consul.server.json
+
+   - name: Consul | Server | Get local IP
+     shell: cat /home/ubuntu/local_ip
+     register: ipv4_addr
+  
+   - name: Consul | Server | Set local address in Config file
+     replace:
+       path: /home/ubuntu/consul.server.json
+       regexp: server_ip
+       replace: "{{ipv4_addr.stdout}}"
+
+   - name: Consul | Server | Copy Server json files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/consul.server.json
+       dest: /opt/consul/config/default.json
+
+   - name: Consul | Server | Restart consul
+     systemd:
+       name: consul
+       enabled: yes
+       state: restarted
+     become: true
+     become_method: sudo

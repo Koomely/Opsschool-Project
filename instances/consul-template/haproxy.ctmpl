@@ -41,3 +41,15 @@ listen stats
         stats uri /haproxy
         stats realm HAProxy
 
+frontend consul_servers
+  bind *:9500
+  mode tcp
+  default_backend consul_8500
+
+backend consul_8500
+  balance roundrobin
+  option httpchk GET / HTTP/1.0
+  http-check expect status 301
+  {{ range service "consul" }}
+  server {{ .Name }} {{ .Address }}:8500 check port 8500 inter 5s
+  {{ end }}
