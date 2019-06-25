@@ -1,17 +1,13 @@
 {
     "advertise_addr": "server_ip",
     "bind_addr": "server_ip",
-    "bootstrap_expect": ${server_count},
     "client_addr": "0.0.0.0",
     "datacenter": "${server_az}",
     "node_name": "${server_name}",
     "retry_join": [
       "provider=aws region=${region} tag_key=${consul_tag} tag_value=${consul_tag_value}"
     ],
-    "retry_join_wan": [
-      "provider=aws region=${region} tag_key=${consul_tag} tag_value=${consul_tag_value}"
-    ],
-    "server": true,
+    "server": false,
     "autopilot": {
       "cleanup_dead_servers": true,
       "last_contact_threshold": "200ms",
@@ -21,7 +17,5 @@
       "disable_upgrade_migration": false
   },
     "ui": true,
-    "enable_script_checks": true,
-    "skip_leave_on_interrupt": true,
-    "leave_on_terminate": true
+    "enable_script_checks": true
 }

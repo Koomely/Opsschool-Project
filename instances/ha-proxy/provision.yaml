@@ -16,25 +16,30 @@
      become_method: sudo
 
    - name: Consul | HAProxy |  Shell command run-consul
-     shell: "/opt/consul/bin/run-consul --client --cluster-tag-key consul-cluster --cluster-tag-value consul-group --datacenter $(cat /home/ubuntu/az)"
+     shell: "/opt/consul/bin/run-consul --client --skip-consul-config"
      become: yes
      become_method: sudo
 
-   - name: Consul Servers | correcting config
-     replace:
-       path: /opt/consul/config/default.json
-       after: 'migration\": false'
-       before: '}'
-       regexp: '^(.+)$'
-       replace: ''
+   - name: Consul | HAProxy | Wait until the file haproxy.client.json is present before continuing
+     wait_for:
+       path: /home/ubuntu/haproxy.client.json
 
-   - name: Consul Servers | correcting config
+   - name: Consul | HAProxy | Get local IP
+     shell: cat /home/ubuntu/local_ip
+     register: ipv4_addr
+  
+   - name: Consul | HAProxy | Set local address in Config file
      replace:
-       path: /opt/consul/config/default.json
-       regexp: '"ui"'
-       replace: '"enable_script_checks": true, "ui"'
+       path: /home/ubuntu/haproxy.client.json
+       regexp: server_ip
+       replace: "{{ipv4_addr.stdout}}"
 
-   - name: Consul | HAProxy | Copy HAProxy json files to /opt/consul/config
+   - name: Consul | HAProxy | Copy HAProxy config files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/haproxy.client.json
+       dest: /opt/consul/config/default.json
+
+   - name: Consul | HAProxy | Copy HAProxy service files to /opt/consul/config
      copy:
        src: /home/ubuntu/haproxy.service.json
        dest: /opt/consul/config/
