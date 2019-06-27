@@ -1,0 +1,31 @@
+---
+- name: Install K8S minion services
+  hosts: localhost
+  tasks:
+
+    - name: K8S | Install Minion | Wait until k8s-common.yaml ends before continuing
+      wait_for:
+        path: /etc/cnt/net.d
+
+    - name: K8S | Install Minion | Wait until install-docker.yaml ends before continuing
+      wait_for:
+        path: /home/ubuntu/docker.finish
+
+    - name: K8S | Install Minion | Wait until the file vars.yaml is present before continuing
+      wait_for:
+        path: /home/ubuntu/vars.yaml
+
+    - name: General | Load varibles
+      include_vars:
+        file: vars.yaml
+
+    - name: K8S | Install Minion | Wait for etcd on Master
+      wait_for:
+        host: "{{ k8s_master_ip }}"
+        port: 2380
+        state: started
+
+    - name: K8S | Install Minion | Join K8S with kubeadm
+      shell: kubeadm join --token={{ kubeadm_token }} --discovery-token-unsafe-skip-ca-verification {{ k8s_master_ip }}:6443 
+      become: true
+      become_method: sudo

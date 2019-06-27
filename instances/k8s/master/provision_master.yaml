@@ -1,0 +1,69 @@
+---
+- name: Consul | k8s-master Server provisioning
+  hosts: localhost
+  become: true
+
+  tasks:
+
+   - name: Consul | k8s-master | Git Clone
+     git:
+       repo: 'https://github.com/hashicorp/terraform-aws-consul.git'
+       dest: /home/ubuntu/terraform-aws-consul
+
+   - name: Consul | k8s-master |  Shell command Installing Consul
+     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 1.5.1"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | k8s-master |  Shell command run-consul
+     shell: "/opt/consul/bin/run-consul --client --skip-consul-config"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | k8s-master | Wait until the file k8s_master.client.json is present before continuing
+     wait_for:
+       path: /home/ubuntu/k8s-master.client.json
+
+   - name: Consul | k8s-master | Get local IP
+     shell: cat /home/ubuntu/local_ip
+     register: ipv4_addr
+  
+   - name: Consul | k8s-master | Set local address in Config file
+     replace:
+       path: /home/ubuntu/k8s-master.client.json
+       regexp: server_ip
+       replace: "{{ipv4_addr.stdout}}"
+
+   - name: Consul | k8s-master | Set local address in Config file
+     replace:
+       path: /home/ubuntu/k8s-master.yaml
+       regexp: k8s_master_ip
+       replace: "{{ipv4_addr.stdout}}"
+  
+   - name: Consul | k8s-master | Copy k8s-master config files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s-master.client.json
+       dest: /opt/consul/config/default.json
+
+   - name: Consul | k8s-master | Copy k8s-master service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.master.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | k8s-master | Copy k8s-master service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.bgp.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | k8s-master | Restart consul
+     systemd:
+       name: consul
+       enabled: yes
+       state: restarted
+     become: true
+     become_method: sudo
+
+   - name: Consul | k8s-master | Create finish file
+     file:
+       path: /home/ubuntu/consul.finish
+       state: touch

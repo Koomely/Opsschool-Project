@@ -1,0 +1,6 @@
+{
+  "service": {
+    "name": "K8s API Master",
+    "port": 6443
+  }
+}

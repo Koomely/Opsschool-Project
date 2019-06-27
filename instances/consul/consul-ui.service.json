@@ -1,0 +1,10 @@
+{
+  "service": {
+    "name": "consul-ui",
+    "port": 8500,
+    "check": {
+      "http": "http://localhost:8500",
+      "interval": "10s"
+    }
+  }
+}

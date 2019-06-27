@@ -1,0 +1,6 @@
+{
+  "service": {
+    "name": "BGP Calico",
+    "port": 179
+  }
+}

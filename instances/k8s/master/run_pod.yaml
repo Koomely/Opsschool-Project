@@ -1,0 +1,15 @@
+---
+- name: Apply pod YAML on master
+  hosts: localhost,k8s_master
+  tasks:
+
+    - name: wait for BGP State to be connected
+      wait_for:
+        host: 0.0.0.0
+        port: 179
+        state: started
+     
+    - name: K8S | Start pod with kubectl apply
+      shell: kubectl apply -f /home/ubuntu/pod.yaml
+      become: yes
+      become_method: sudo

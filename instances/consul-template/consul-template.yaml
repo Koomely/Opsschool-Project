@@ -11,7 +11,7 @@
        dest: /home/ubuntu/consul-template/consul-template.zip
 
    - name: Consul-Template | HAProxy |  Unzip consul-template
-     shell: "unzip consul-template.zip"
+     shell: "unzip -o consul-template.zip"
 
    - name: Consul-Template | HAProxy | Copy consul-template binary
      copy:
