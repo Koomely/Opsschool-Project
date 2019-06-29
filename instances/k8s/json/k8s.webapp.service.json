@@ -1,0 +1,10 @@
+{
+    "service": {
+      "name": "webapp",
+      "port": 30036,
+      "check": {
+        "http": "http://localhost:30036",
+        "interval": "10s"
+      }
+    }
+  }

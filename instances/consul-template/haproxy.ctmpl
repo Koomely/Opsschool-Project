@@ -50,6 +50,21 @@ backend consul_8500
   balance roundrobin
   option httpchk GET / HTTP/1.0
   http-check expect status 301
-  {{ range service "consul" }}
-  server {{ .Name }} {{ .Address }}:8500 check port 8500 inter 5s
+  {{ range service "consul-ui" }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check port {{ .Port }} inter 5s
   {{ end }}
+
+
+frontend webapp_80
+  bind *:80
+  mode tcp
+  default_backend webapp_30036
+
+backend webapp_30036
+  balance roundrobin
+  option httpchk GET / HTTP/1.0
+  http-check expect status 200
+  {{ range service "webapp" }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check port {{ .Port }} inter 5s
+  {{ end }}
+

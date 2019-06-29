@@ -39,6 +39,11 @@
        src: /home/ubuntu/consul.server.json
        dest: /opt/consul/config/default.json
 
+   - name: Consul | Server | Copy Service UI json files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/consul-ui.service.json
+       dest: /opt/consul/config/consul-ui.service.json
+
    - name: Consul | Server | Restart consul
      systemd:
        name: consul

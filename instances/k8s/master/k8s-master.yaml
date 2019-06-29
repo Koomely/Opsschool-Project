@@ -1,0 +1,52 @@
+---
+- name: Install K8S master services
+  hosts: localhost
+  tasks:
+
+    - name: K8S | Install Master | Wait until k8s-common.yaml ends before continuing
+      wait_for:
+        path: /home/ubuntu/k8s-common.finish
+
+    - name: K8S | Install Master | Wait until install-docker.yaml ends before continuing
+      wait_for:
+        path: /home/ubuntu/docker.finish
+
+    - name: K8S | Install Master | Get local IP
+      shell: cat /home/ubuntu/local_ip
+      register: ipv4_addr
+
+    - name: K8S | Install Master | Initialize K8S with kubeadm
+      shell: kubeadm init --token="gqv3y0.91c3dhvt24c2s63h" --apiserver-advertise-address="{{ ipv4_addr.stdout }}" --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=NumCPU,DirAvailable--var-lib-etcd
+      become: true
+      become_method: sudo
+
+    - name: K8S | Install Master | Create .kube directory
+      file:
+        path: "/home/ubuntu/.kube"
+        state: directory
+
+    - name: K8S | Install Master | Copy admin.conf file to /.kube/config
+      shell: "cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config"
+      become: true
+      become_method: sudo
+
+    - name: K8S | Install Master | Change ownership on /.kube/config
+      file:
+        path: "/home/ubuntu/.kube/config"
+        owner: ubuntu
+        group: ubuntu
+      become: true
+      become_method: sudo
+
+    - name: K8S | Install Master | Install pod network
+      shell: kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+      become: true
+      become_method: sudo
+
+    - name: K8S | Install Master | Install pod network
+      shell: kubectl apply -f https://docs.projectcalico.org/v3.7/manifests/calico.yaml
+      become: true
+      become_method: sudo
+
+
+

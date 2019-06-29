@@ -21,13 +21,13 @@ variable "cidr" {
 }
 
 variable "count" {
-    default = 1
+    default = 2
 }
 
 # Consul Vars
 
 variable "consul_server_count" {
-  default = 3
+  default = 1
 }
 
 variable "consul_tag" {
@@ -45,3 +45,8 @@ variable "haproxy_count" {
   default = 1
 }
 
+# K8s Vars
+
+variable "k8s_minion_count" {
+  default = 1
+}

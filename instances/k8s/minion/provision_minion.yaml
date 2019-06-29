@@ -1,0 +1,68 @@
+---
+- name: Consul | k8s-minion Server provisioning
+  hosts: localhost
+  become: true
+
+  tasks:
+
+   - name: Consul | k8s-minion | Git Clone
+     git:
+       repo: 'https://github.com/hashicorp/terraform-aws-consul.git'
+       dest: /home/ubuntu/terraform-aws-consul
+
+   - name: Consul | k8s-minion |  Shell command Installing Consul
+     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 1.5.1"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | k8s-minion |  Shell command run-consul
+     shell: "/opt/consul/bin/run-consul --client --skip-consul-config"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | k8s-minion | Wait until the file k8s_minion.client.json is present before continuing
+     wait_for:
+       path: /home/ubuntu/k8s-minion.client.json
+
+   - name: Consul | k8s-minion | Get local IP
+     shell: cat /home/ubuntu/local_ip
+     register: ipv4_addr
+  
+   - name: Consul | k8s-minion | Set local address in Config file
+     replace:
+       path: /home/ubuntu/k8s-minion.client.json
+       regexp: server_ip
+       replace: "{{ipv4_addr.stdout}}"
+
+   - name: Consul | k8s-minion | Copy k8s-minion config files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s-minion.client.json
+       dest: /opt/consul/config/default.json
+
+   - name: Consul | k8s-minion | Copy k8s-minion service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.bgp.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | k8s-minion | Copy k8s-minion service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.webapp.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | k8s-minion | Copy k8s-minion service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.kubelet.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | k8s-minion | Restart consul
+     systemd:
+       name: consul
+       enabled: yes
+       state: restarted
+     become: true
+     become_method: sudo
+
+   - name: Consul | k8s-minion | Create finish file
+     file:
+       path: /home/ubuntu/consul.finish
+       state: touch

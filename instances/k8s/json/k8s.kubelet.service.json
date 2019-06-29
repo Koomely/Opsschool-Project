@@ -1,0 +1,6 @@
+{
+  "service": {
+    "name": "Kubelet Worker",
+    "port": 10250
+  }
+}
