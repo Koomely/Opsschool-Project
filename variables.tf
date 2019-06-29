@@ -27,7 +27,7 @@ variable "count" {
 # Consul Vars
 
 variable "consul_server_count" {
-  default = 3
+  default = 1
 }
 
 variable "consul_tag" {
@@ -48,5 +48,5 @@ variable "haproxy_count" {
 # K8s Vars
 
 variable "k8s_minion_count" {
-  default = 2
+  default = 1
 }

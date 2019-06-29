@@ -179,9 +179,9 @@ resource "aws_instance" "k8s_minion" {
         bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
       } 
     }
-
+/*
   provisioner "remote-exec" "minion_prov" {
-  inline = ["while [ ! -f k8s-common.yaml ] ;do sleep 2; done ;  sudo ansible-playbook -i localhost k8s-common.yaml; sudo ansible-playbook -i localhost k8s-minion.yaml"]
+  inline = ["while [ ! -f k8s-minion.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost k8s-minion.yaml"]
 
         connection {
           user     = "ubuntu"
@@ -190,7 +190,7 @@ resource "aws_instance" "k8s_minion" {
           bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
       }
 }
-
+*/
   tags = {
     Name = "Final-Project-k8s-minion-${(count.index % var.k8s_minion_count) + 1}-${element(data.aws_availability_zones.az.names, count.index  / var.k8s_minion_count)}"
     consul-cluster = "${var.consul_tag_key}"
@@ -232,9 +232,9 @@ resource "aws_instance" "k8s_master" {
         bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
       } 
     }
- 
+/*
   provisioner "remote-exec" "master_prov" {
-  inline = ["while [ ! -f k8s-common.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost k8s-common.yaml; sudo ansible-playbook -i localhost k8s-master.yaml"]
+  inline = ["while [ ! -f k8s-master.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost k8s-master.yaml"]
 
         connection {
           user     = "ubuntu"
@@ -243,7 +243,7 @@ resource "aws_instance" "k8s_master" {
           bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
       }
 }
-
+*/
   tags = {
     Name = "Final-Project-k8s-master-${count.index + 1}-${element(data.aws_availability_zones.az.names, count.index)}"
     consul-cluster = "${var.consul_tag_key}"
@@ -263,7 +263,7 @@ resource "null_resource" "start_pod" {
   count = "${var.count}"
 
 provisioner "remote-exec" "start_pod" {
-  inline = ["sudo ansible-playbook -i localhost run_pod.yaml"]
+  inline = ["while [ ! -f run_pod.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost run_pod.yaml"]
 
         connection {
           user     = "ubuntu"

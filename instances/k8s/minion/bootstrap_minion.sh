@@ -17,5 +17,5 @@
 
   ansible-playbook -i localhost provision_minion.yaml
   ansible-playbook -i localhost install-docker.yaml
- # ansible-playbook -i localhost k8s-common.yaml
- # ansible-playbook -i localhost k8s-minion.yaml
+  ansible-playbook -i localhost k8s-common.yaml
+  ansible-playbook -i localhost k8s-minion.yaml

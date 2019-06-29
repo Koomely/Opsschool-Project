@@ -18,5 +18,5 @@
 
   ansible-playbook -i localhost provision_master.yaml  
   ansible-playbook -i localhost install-docker.yaml
-  #ansible-playbook -i localhost k8s-common.yaml
-  #ansible-playbook -i localhost k8s-master.yaml
+  ansible-playbook -i localhost k8s-common.yaml
+  ansible-playbook -i localhost k8s-master.yaml

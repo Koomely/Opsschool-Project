@@ -5,7 +5,7 @@
 
     - name: K8S | Install Minion | Wait until k8s-common.yaml ends before continuing
       wait_for:
-        path: /etc/cnt/net.d
+        path: /home/ubuntu/k8s-common.finish
 
     - name: K8S | Install Minion | Wait until install-docker.yaml ends before continuing
       wait_for:

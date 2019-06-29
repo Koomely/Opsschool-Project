@@ -44,5 +44,5 @@
 
     - name: K8S | Install K8S | Create /etc/cnt/net.d folder
       file:
-        path: /etc/cnt/net.d 
-        state: directory
+        path: /home/ubuntu/k8s-common.finish 
+        state: touch
