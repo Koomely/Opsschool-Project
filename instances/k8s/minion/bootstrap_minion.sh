@@ -8,6 +8,7 @@
   
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s-common.yaml  
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/install-docker.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/config.yaml
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s-minion.yaml
 
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/provision_minion.yaml

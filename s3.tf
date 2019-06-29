@@ -170,6 +170,13 @@ resource "aws_s3_bucket_object" "docker_install" {
   source = "instances/k8s/common/install-docker.yaml"
 }
 
+resource "aws_s3_bucket_object" "k8s_config" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "config.yaml"
+  source = "instances/k8s/common/config.yaml"
+}
 
 #################################################
 # Copying files required for K8s

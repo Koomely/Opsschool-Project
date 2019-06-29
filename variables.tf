@@ -48,5 +48,5 @@ variable "haproxy_count" {
 # K8s Vars
 
 variable "k8s_minion_count" {
-  default = 1
+  default = 2
 }

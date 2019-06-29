@@ -25,7 +25,25 @@
         port: 2380
         state: started
 
+    - name: K8S | Install Minion |  Set node tag in Config file
+      replace:
+        path: /home/ubuntu/config.yaml
+        regexp: NODE_TYPE
+        replace: "{{ node_tag }}"
+
+    - name: Consul | HAProxy | Set master address in Config file
+      replace:
+        path: /home/ubuntu/config.yaml
+        regexp: MASTER_IP
+        replace: "{{ k8s_master_ip }}"
+
+    - name: Consul | HAProxy | Set local address in Config file
+      replace:
+        path: /home/ubuntu/config.yaml
+        regexp: TOKEN
+        replace: "{{ kubeadm_token }}"
+        
     - name: K8S | Install Minion | Join K8S with kubeadm
-      shell: kubeadm join --token={{ kubeadm_token }} --discovery-token-unsafe-skip-ca-verification {{ k8s_master_ip }}:6443 
+      shell: kubeadm join --config /home/ubuntu/config.yaml 
       become: true
       become_method: sudo

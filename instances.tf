@@ -137,11 +137,12 @@ data "template_file" "k8s_minion" {
   }
 }
 
-data "template_file" "k8s_vars" {
+data "template_file" "k8s_webapp_vars" {
   count = "${var.count}"
   template = "${file("instances/k8s/minion/vars.tpl")}"
   vars {
     k8s_master = "${element(aws_instance.k8s_master.*.private_ip, count.index)}"
+    node_tag = "webapp"
   }
 }
 
@@ -158,7 +159,7 @@ resource "aws_instance" "k8s_minion" {
     #depends_on = ["aws_instance.k8s_master"]
 
     provisioner "file" {
-      content      = "${element(data.template_file.k8s_vars.*.rendered, count.index / var.k8s_minion_count)}"
+      content      = "${element(data.template_file.k8s_webapp_vars.*.rendered, count.index / var.k8s_minion_count)}"
       destination = "/home/ubuntu/vars.yaml"
 
       connection {
