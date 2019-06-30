@@ -130,7 +130,7 @@ data "template_file" "k8s_minion" {
   template = "${file("instances/consul/consul.client.json")}"
   vars {
     server_az = "${element(data.aws_availability_zones.az.names, count.index / var.k8s_minion_count)}"
-    server_name = "k8s-minion-${(count.index % var.k8s_minion_count) + 1}"
+    server_name = "k8s-minion-Webapp-${(count.index % var.k8s_minion_count) + 1}"
     region = "${var.region_name}"
     consul_tag = "${var.consul_tag}"
     consul_tag_value = "${var.consul_tag_key}"
@@ -139,7 +139,7 @@ data "template_file" "k8s_minion" {
 
 data "template_file" "k8s_webapp_vars" {
   count = "${var.count}"
-  template = "${file("instances/k8s/minion/vars.tpl")}"
+  template = "${file("instances/k8s/common/vars.tpl")}"
   vars {
     k8s_master = "${element(aws_instance.k8s_master.*.private_ip, count.index)}"
     node_tag = "webapp"
@@ -257,13 +257,94 @@ user_data = "${file("instances/k8s/master/bootstrap_master.sh")}"
 
 
 #############################
+# Monitoring
+#############################
+
+
+
+data "template_file" "k8s_monitoring" {
+  count = "${var.count}"
+  template = "${file("instances/consul/consul.client.json")}"
+  vars {
+    server_az = "${element(data.aws_availability_zones.az.names, count.index)}"
+    server_name = "k8s-monitoring"
+    region = "${var.region_name}"
+    consul_tag = "${var.consul_tag}"
+    consul_tag_value = "${var.consul_tag_key}"
+  }
+}
+
+data "template_file" "k8s_monitoring_vars" {
+  count = "${var.count}"
+  template = "${file("instances/k8s/common/vars.tpl")}"
+  vars {
+    k8s_master = "${element(aws_instance.k8s_master.*.private_ip, count.index)}"
+    node_tag = "monitoring"
+  }
+}
+
+resource "aws_instance" "k8s_monitoring" {
+    count = "${var.count}"
+    ami = "${var.ami}"
+    subnet_id = "${element(aws_subnet.private.*.id, count.index)}"
+    instance_type = "t2.micro"
+    vpc_security_group_ids = ["${aws_security_group.any.id}"]
+    key_name = "${aws_key_pair.generated_key.key_name}"
+
+    iam_instance_profile   = "${aws_iam_instance_profile.consul-join.name}"
+  
+    #depends_on = ["aws_instance.k8s_master"]
+
+    provisioner "file" {
+      content      = "${element(data.template_file.k8s_monitoring_vars.*.rendered, count.index)}"
+      destination = "/home/ubuntu/vars.yaml"
+
+      connection {
+        user     = "ubuntu"
+        private_key = "${tls_private_key.self-gen-key.private_key_pem}"
+
+        bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
+      } 
+    }
+      provisioner "file" {
+      content      = "${element(data.template_file.k8s_monitoring.*.rendered, count.index)}"
+      destination = "/home/ubuntu/k8s-monitoring.client.json"
+
+      connection {
+        user     = "ubuntu"
+        private_key = "${tls_private_key.self-gen-key.private_key_pem}"
+
+        bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
+      } 
+    }
+/*
+  provisioner "remote-exec" "minion_prov" {
+  inline = ["while [ ! -f k8s-minion.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost k8s-minion.yaml"]
+
+        connection {
+          user     = "ubuntu"
+          private_key = "${tls_private_key.self-gen-key.private_key_pem}"
+
+          bastion_host = "${element(aws_instance.ha-proxy.*.public_ip, count.index / var.haproxy_count)}"
+      }
+}
+*/
+  tags = {
+    Name = "Final-Project-k8s-monitoring-${element(data.aws_availability_zones.az.names, count.index)}"
+    consul-cluster = "${var.consul_tag_key}"
+  }
+user_data = "${file("instances/k8s/monitoring/bootstrap_monitoring.sh")}"
+}
+
+
+#############################
 # Remote exec
 #############################
 
-resource "null_resource" "start_pod" {
+resource "null_resource" "start_pods" {
   count = "${var.count}"
 
-provisioner "remote-exec" "start_pod" {
+provisioner "remote-exec" "start_pods" {
   inline = ["while [ ! -f run_pod.yaml ] ;do sleep 2; done ; sudo ansible-playbook -i localhost run_pod.yaml"]
 
         connection {

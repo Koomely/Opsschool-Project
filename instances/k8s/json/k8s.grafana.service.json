@@ -1,0 +1,10 @@
+{
+    "service": {
+      "name": "grafana",
+      "port": 32000,
+      "check": {
+        "http": "http://localhost:32000",
+        "interval": "10s"
+      }
+    }
+  }

@@ -21,7 +21,7 @@ variable "cidr" {
 }
 
 variable "count" {
-    default = 2
+    default = 1
 }
 
 # Consul Vars

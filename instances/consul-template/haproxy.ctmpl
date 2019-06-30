@@ -68,3 +68,30 @@ backend webapp_30036
   server {{ .Name }} {{ .Address }}:{{ .Port }} check port {{ .Port }} inter 5s
   {{ end }}
 
+  frontend prometheus_9090
+  bind *:9090
+  mode tcp
+  default_backend prometheus_30000
+
+backend prometheus_30000
+  balance roundrobin
+  option httpchk GET / HTTP/1.0
+  http-check expect status 302
+  {{ range service "prometheus" }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check port {{ .Port }} inter 5s
+  {{ end }}
+
+frontend grafana_9091
+  bind *:9091
+  mode tcp
+  default_backend grafana_32000
+
+backend grafana_32000
+  balance roundrobin
+  option httpchk GET / HTTP/1.0
+  http-check expect status 302
+  {{ range service "grafana" }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check port {{ .Port }} inter 5s
+  {{ end }}
+
+

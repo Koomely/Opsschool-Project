@@ -8,7 +8,42 @@
         host: 0.0.0.0
         port: 179
         state: started
-     
+
+    - name: K8S | Monitoring | create namespace monitoring
+      shell: kubectl create namespace monitoring
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | create cluster role
+      shell: kubectl create -f clusterRole.yaml
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | create config-map
+      shell: kubectl create -f config-map.yaml -n monitoring
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | Deploy Prometheus
+      shell: kubectl create  -f prometheus-deployment.yaml --namespace=monitoring
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | Deploy Prometheus service
+      shell: kubectl create -f prometheus-service.yaml --namespace=monitoring
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | Deploy Grafana service
+      shell: kubectl create -f grafana-ip-service.yaml --namespace=monitoring
+      become: yes
+      become_method: sudo
+
+    - name: K8S | Monitoring | Deploy Grafana pod
+      shell: kubectl create -f grafana-deployment.yaml --namespace=monitoring
+      become: yes
+      become_method: sudo
+
     - name: K8S | Start pod with kubectl apply
       shell: kubectl apply -f /home/ubuntu/pod.yaml
       become: yes

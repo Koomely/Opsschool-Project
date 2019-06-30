@@ -1,0 +1,10 @@
+{
+    "service": {
+      "name": "prometheus",
+      "port": 30000,
+      "check": {
+        "http": "http://localhost:30000",
+        "interval": "10s"
+      }
+    }
+  }

@@ -13,12 +13,13 @@
 
 # Consul JSONs and Provision
 
-  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/provision_minion.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/provision_monitoring.yaml
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.bgp.service.json
-  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.webapp.service.json
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.prometheus.service.json
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.grafana.service.json
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.kubelet.service.json
 
-  ansible-playbook -i localhost provision_minion.yaml
+  ansible-playbook -i localhost provision_monitoring.yaml
   ansible-playbook -i localhost install-docker.yaml
   ansible-playbook -i localhost k8s-common.yaml
   ansible-playbook -i localhost k8s-minion.yaml

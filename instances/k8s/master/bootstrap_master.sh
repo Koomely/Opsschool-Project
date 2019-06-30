@@ -12,6 +12,17 @@
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/pod.yaml
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/run_pod.yaml
 
+# files required for monitoring pods
+
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/clusterRole.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/config-map.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/prometheus-deployment.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/prometheus-service.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/grafana-deployment.yaml
+  wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/grafana-ip-service.yaml
+
+# Consul JSONs and Provision
+
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/provision_master.yaml
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.bgp.service.json
   wget http://final-project-s3-$(cat /home/ubuntu/az).s3.amazonaws.com/k8s/k8s.master.service.json

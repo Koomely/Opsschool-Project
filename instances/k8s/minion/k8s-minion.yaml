@@ -31,13 +31,13 @@
         regexp: NODE_TYPE
         replace: "{{ node_tag }}"
 
-    - name: Consul | HAProxy | Set master address in Config file
+    - name: K8S | Install Minion | Set master address in Config file
       replace:
         path: /home/ubuntu/config.yaml
         regexp: MASTER_IP
         replace: "{{ k8s_master_ip }}"
 
-    - name: Consul | HAProxy | Set local address in Config file
+    - name: K8S | Install Minion | Set token in Config file
       replace:
         path: /home/ubuntu/config.yaml
         regexp: TOKEN

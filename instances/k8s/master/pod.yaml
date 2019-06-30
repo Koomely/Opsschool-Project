@@ -1,12 +1,11 @@
 # Create a pod and expose port 5050
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: apps/v1
+kind: DaemonSet
 metadata:
   name: couchpotato-deploy
   labels:
     app: couchpotato
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: couchpotato

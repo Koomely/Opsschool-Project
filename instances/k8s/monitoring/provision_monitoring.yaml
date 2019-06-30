@@ -1,0 +1,73 @@
+---
+- name: Consul | K8s-Monitoring Server provisioning
+  hosts: localhost
+  become: true
+
+  tasks:
+
+   - name: Consul | K8s-Monitoring | Git Clone
+     git:
+       repo: 'https://github.com/hashicorp/terraform-aws-consul.git'
+       dest: /home/ubuntu/terraform-aws-consul
+
+   - name: Consul | K8s-Monitoring |  Shell command Installing Consul
+     shell: "terraform-aws-consul/modules/install-consul/install-consul --version 1.5.1"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | K8s-Monitoring |  Shell command run-consul
+     shell: "/opt/consul/bin/run-consul --client --skip-consul-config"
+     become: yes
+     become_method: sudo
+
+   - name: Consul | K8s-Monitoring | Wait until the file k8s_minion.client.json is present before continuing
+     wait_for:
+       path: /home/ubuntu/k8s-monitoring.client.json
+
+   - name: Consul | K8s-Monitoring | Get local IP
+     shell: cat /home/ubuntu/local_ip
+     register: ipv4_addr
+  
+   - name: Consul | K8s-Monitoring | Set local address in Config file
+     replace:
+       path: /home/ubuntu/k8s-monitoring.client.json
+       regexp: server_ip
+       replace: "{{ipv4_addr.stdout}}"
+
+   - name: Consul | K8s-Monitoring | Copy k8s-monitoring config files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s-monitoring.client.json
+       dest: /opt/consul/config/default.json
+
+   - name: Consul | K8s-Monitoring | Copy k8s-monitoring service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.bgp.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | K8s-Monitoring | Copy k8s-monitoring service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.prometheus.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | K8s-Monitoring | Copy k8s-monitoring service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.grafana.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | K8s-Monitoring | Copy k8s-monitoring service files to /opt/consul/config
+     copy:
+       src: /home/ubuntu/k8s.kubelet.service.json
+       dest: /opt/consul/config/
+
+   - name: Consul | K8s-Monitoring | Restart consul
+     systemd:
+       name: consul
+       enabled: yes
+       state: restarted
+     become: true
+     become_method: sudo
+
+   - name: Consul | K8s-Monitoring | Create finish file
+     file:
+       path: /home/ubuntu/consul.finish
+       state: touch

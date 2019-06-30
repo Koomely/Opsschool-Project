@@ -281,3 +281,94 @@ resource "aws_s3_bucket_object" "k8s_service_webapp" {
   key = "k8s/k8s.webapp.service.json"
   source = "instances/k8s/json/k8s.webapp.service.json"
 }
+
+
+#################################################
+# Copying files required for Monitoring
+#################################################
+
+
+resource "aws_s3_bucket_object" "k8s_monitoring_prov" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/provision_monitoring.yaml"
+  source = "instances/k8s/monitoring/provision_monitoring.yaml"
+}
+
+# Files needed for grafana
+
+
+
+resource "aws_s3_bucket_object" "k8s_grafana_service" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/grafana-ip-service.yaml"
+  source = "instances/k8s/monitoring/grafana/grafana-ip-service.yaml"
+}
+
+
+resource "aws_s3_bucket_object" "k8s_grafana_pod" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/grafana-deployment.yaml"
+  source = "instances/k8s/monitoring/grafana/grafana-deployment.yaml"
+}
+
+
+# Files needed for prometheus deployment
+
+resource "aws_s3_bucket_object" "k8s_prom_role" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/clusterRole.yaml"
+  source = "instances/k8s/monitoring/prometheus/clusterRole.yaml"
+}
+
+
+resource "aws_s3_bucket_object" "k8s_prom_config_map" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/config-map.yaml"
+  source = "instances/k8s/monitoring/prometheus/config-map.yaml"
+}
+
+resource "aws_s3_bucket_object" "k8s_prom_deployment" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/prometheus-deployment.yaml"
+  source = "instances/k8s/monitoring/prometheus/prometheus-deployment.yaml"
+}
+
+resource "aws_s3_bucket_object" "k8s_prom_service" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/prometheus-service.yaml"
+  source = "instances/k8s/monitoring/prometheus/prometheus-service.yaml"
+}
+
+# JSON Service Files
+
+resource "aws_s3_bucket_object" "k8s_service_prometheus" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/k8s.grafana.service.json"
+  source = "instances/k8s/json/k8s.grafana.service.json"
+}
+
+resource "aws_s3_bucket_object" "k8s_service_grafana" {
+  count = "${var.count}"
+  bucket = "${element(aws_s3_bucket.bucket.*.id, count.index)}"
+  acl = "private"
+  key = "k8s/k8s.prometheus.service.json"
+  source = "instances/k8s/json/k8s.prometheus.service.json"
+}
+
+
